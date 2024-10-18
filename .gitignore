@@ -2,3 +2,6 @@
 10raw/
 40extracted/
 40raw/
+.vscode/
+.conda/
+.ipynb_checkpoints/
