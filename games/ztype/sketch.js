@@ -46,6 +46,8 @@ let acceleration = 10;  // How much speed increases over time (can adjust this t
 
 var ship; // color of ship
 
+currPressed = {};
+
 function preload() {
     backgroundImage = loadImage('space.avif'); // Ensure the correct path to the image file
     boogieImage = loadImage('boogie.png');
@@ -117,26 +119,54 @@ function handleField() {
 /**
  * handles user input
  */
+function keyReleased(){
+    currPressed[keyCode].keyup = Date.now();
+    keyData.push(currPressed[keyCode]);
+}
+
 function keyPressed() {
 
     let keyPressedData = {
         key: String.fromCharCode(keyCode).toLowerCase(), // Capture the key pressed
-        timestamp: Date.now(), // Capture the current time in milliseconds
-        speed: speed // Store the current speed
+        keydown: Date.now(), // Capture the current time in milliseconds
+        keyup: 0,
+        speed: speed, // Store the current speed
+        expectedLetter: "none",
+        completeWord: "none",
+        wordTyped : "none",
     };
 
     // Store the key data in the array
-    keyData.push(keyPressedData);
+    
 
     if (focus) {
-        focus.erode(keyCode);
+        keyPressedData.expectedLetter = focus.text[focus.completedText.length];
+        keyPressedData.completeWord = focus.text;
+        keyPressedData.wordTyped = focus.completedText;
+
+        console.log(String.fromCharCode(keyCode).toLowerCase(), keyPressedData.expectedLetter);
+        focus.erode(keyCode);       
     } else {
         focus = findAsteroid(keyCode, field);
 
+        
+
         if (focus) {
+            keyPressedData.expectedLetter = focus.text[focus.completedText.length];
+            console.log(String.fromCharCode(keyCode).toLowerCase(), keyPressedData.expectedLetter);
             focus.erode(keyCode);
+            
+        }
+        else{
+            keyPressedData.expectedLetter = "none";
+            console.log(String.fromCharCode(keyCode).toLowerCase(), keyPressedData.expectedLetter);
         }
     }
+
+    
+    
+
+    currPressed[keyCode] = keyPressedData;
 }
 
 /**
@@ -211,9 +241,9 @@ function endGame() {
     noLoop();
 
     // Convert keyData array to CSV format
-    let csvContent = "key,timestamp,speed\n"; // Column headers
+    let csvContent = "key,keydown,keyup,expectedLetter,completeWord,wordTyped,speed\n"; // Column headers
     keyData.forEach(function(row) {
-        csvContent += `${row.key},${row.timestamp},${row.speed}\n`;
+        csvContent += `${row.key},${row.keydown},${row.keyup},${row.expectedLetter},${row.completeWord},${row.wordTyped},${row.speed}\n`;
     });
 
     // Save the CSV file
