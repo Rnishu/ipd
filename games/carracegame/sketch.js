@@ -50,7 +50,7 @@ class Car {
     let redValue = red(pixelColor);
     let greenValue = green(pixelColor);
     let blueValue = blue(pixelColor);
-    if ((redValue === 255 && greenValue === 255 && blueValue === 255) || (redValue === 189 && greenValue === 30 && blueValue === 45)) {
+    if ((redValue === 254 && greenValue === 254 && blueValue === 254) || (redValue === 189 && greenValue === 30 && blueValue === 45)) {
       this.die();
       return; // Call the die() function if the car intersects with red or white
     } else {
